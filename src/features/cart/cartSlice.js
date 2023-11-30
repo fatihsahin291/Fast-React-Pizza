@@ -16,13 +16,17 @@ const cartSlice = createSlice({
     },
     increaseItemQuantity: (state, action) => {
       const item = state.cart.find((item) => item.pizzaId === action.payload);
+
       item.quantity += 1;
       item.totalPrice = item.quantity * item.unitPrice;
     },
     decreaseItemQuantity: (state, action) => {
       const item = state.cart.find((item) => item.pizzaId === action.payload);
+
       item.quantity -= 1;
       item.totalPrice = item.quantity * item.unitPrice;
+
+      if (item.quantity === 0) cartSlice.caseReducers.deleteItem(state, action);
     },
     clearCart: (state) => {
       state.cart = [];
@@ -52,5 +56,10 @@ export const getTotalCartPrice = (state) =>
   state.cart.cart.reduce((acc, item) => {
     return acc + item.totalPrice;
   }, 0);
+
+export const getCurrentQuantityById = (pizzaId) => (state) => {
+  const item = state.cart.cart.find((item) => item.pizzaId === pizzaId);
+  return item ? item.quantity : 0;
+};
 
 // Reselect Library
